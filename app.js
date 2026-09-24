@@ -263,7 +263,8 @@
     }
     const c = cabinOf(state.cabin);
     return `<div class="home">
-      <h2>${esc(c.name)} <em>· sleeps ${c.sleeps}, ${c.bedrooms} bd, ${c.bathrooms} ba · in ${esc(c.check_in)}, out ${esc(c.check_out)}</em></h2>
+      <h2>${esc(c.name)}</h2>
+      <p class="cabin-meta">Sleeps ${c.sleeps} · ${c.bedrooms} bd · ${c.bathrooms} ba · Check-in ${esc(c.check_in)} · Check-out ${esc(c.check_out)}</p>
       <div class="strip">${c.photos.map((p, i) => `<button data-photo="${c.slug}:${i}" aria-label="${esc(p.label)}"><img src="${asset(p.thumb)}" alt="${esc(p.label)}" loading="lazy"></button>`).join("")}</div>
       <h2>Quick answers</h2>
       <div class="chips">${quick.map((q) => `<button class="chip q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
@@ -302,15 +303,29 @@
   }
   function openLightbox(cabin, i) {
     let idx = i;
-    const box = document.createElement("div"); box.className = "lightbox"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
-    const draw = () => { const p = cabin.photos[idx]; box.innerHTML = `<img src="${asset(p.file)}" alt="${esc(p.label)}"><div class="cap"><span>${esc(cabin.name)} · ${esc(p.label)} · ${idx + 1}/${cabin.photos.length}</span><button class="btn" id="lbclose">${ICON.x} Close</button></div>`; box.querySelector("#lbclose").addEventListener("click", close); };
-    const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
-    const onKey = (e) => { if (e.key === "Escape") close(); if (e.key === "ArrowRight") { idx = (idx + 1) % cabin.photos.length; draw(); } if (e.key === "ArrowLeft") { idx = (idx - 1 + cabin.photos.length) % cabin.photos.length; draw(); } };
+    const n = cabin.photos.length;
+    const box = document.createElement("div"); box.className = "lightbox"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Photo");
+    const prevOverflow = document.body.style.overflow;
+    const go = (d) => { idx = (idx + d + n) % n; draw(); };
+    const draw = () => {
+      const p = cabin.photos[idx];
+      box.innerHTML = `<div class="frame">
+        <img src="${asset(p.file)}" alt="${esc(p.label)}">
+        <div class="cap"><span class="txt">${esc(cabin.name)} · ${esc(p.label)} · ${idx + 1}/${n}</span>
+          <div class="nav">${n > 1 ? `<button class="btn ghost" id="lbprev" aria-label="Previous photo">‹</button><button class="btn ghost" id="lbnext" aria-label="Next photo">›</button>` : ""}<button class="btn" id="lbclose">${ICON.x} Close</button></div>
+        </div></div>`;
+      box.querySelector("#lbclose").addEventListener("click", close);
+      box.querySelector("#lbprev")?.addEventListener("click", () => go(-1));
+      box.querySelector("#lbnext")?.addEventListener("click", () => go(1));
+    };
+    const close = () => { box.remove(); document.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
+    const onKey = (e) => { if (e.key === "Escape") close(); if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); };
     let x0 = null;
     box.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
-    box.addEventListener("touchend", (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) { idx = (idx + (dx < 0 ? 1 : -1) + cabin.photos.length) % cabin.photos.length; draw(); } });
-    box.addEventListener("click", (e) => { if (e.target.tagName === "IMG") close(); });
+    box.addEventListener("touchend", (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); });
+    box.addEventListener("click", (e) => { if (e.target === box) close(); });
     document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
     draw(); document.body.appendChild(box);
   }
   let toastT;
