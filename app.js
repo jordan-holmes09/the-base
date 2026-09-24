@@ -251,14 +251,12 @@
   }
   function renderHome() {
     const quick = ["Check-in time", "WiFi", "Hot tub", "Directions", "Parking", "Pets", "Trash", "Dishwasher", "Coffee", "Firewood", "Late checkout", "TV", "Vehicle", "Grocery"];
-    const counts = visibleFacts().length;
     if (state.cabin === "all") {
       return `<div class="home">
         <h2>Pick a cabin <em>or just ask.</em></h2>
         <div class="cabin-grid">${state.data.cabins.map((c) => `<button class="cabin-card" data-cabin="${c.slug}"><img src="${asset(c.photos[0]?.thumb || "")}" alt=""><div class="lbl"><b>${esc(c.name)}</b><span>Sleeps ${c.sleeps} · ${c.bedrooms} bd · ${c.bathrooms} ba</span></div></button>`).join("")}</div>
         <h2>Quick answers</h2>
         <div class="chips">${quick.map((q) => `<button class="chip q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
-        <p class="facts-line">${counts} facts loaded · ${state.view === "guest" ? "guest-safe only" : "team view"} · built ${esc((state.data.built_at || "").slice(0, 10))}</p>
       </div>`;
     }
     const c = cabinOf(state.cabin);
@@ -268,7 +266,6 @@
       <div class="strip">${c.photos.map((p, i) => `<button data-photo="${c.slug}:${i}" aria-label="${esc(p.label)}"><img src="${asset(p.thumb)}" alt="${esc(p.label)}" loading="lazy"></button>`).join("")}</div>
       <h2>Quick answers</h2>
       <div class="chips">${quick.map((q) => `<button class="chip q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
-      <p class="facts-line">${counts} facts for ${esc(c.name)} · ${state.view === "guest" ? "guest-safe only" : "team view"}</p>
     </div>`;
   }
   function renderCard(f) {
