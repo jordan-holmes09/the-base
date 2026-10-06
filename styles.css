@@ -158,3 +158,20 @@ a { color: var(--amber-glow); }
   .lock h1 { font-size: 52px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- catalog answers (one answer + collapsed related) ---------- */
+.card p.caution { margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: var(--warn); background: rgba(224,164,88,.08); border: 1px solid rgba(224,164,88,.35); }
+.card details.behind { margin-top: 10px; font-size: 13px; color: var(--text-2); }
+.card details.behind summary { cursor: pointer; color: var(--text-3); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+.card details.behind p { margin: 6px 0 0; white-space: pre-line; }
+details.related { margin: 12px var(--gutter) 0; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+details.related > summary { padding: 12px 14px; cursor: pointer; color: var(--text-2); font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+details.rel { border-top: 1px solid var(--line); }
+details.rel > summary { padding: 11px 14px; cursor: pointer; font-size: 14px; color: var(--cream); }
+.rel-body { padding: 0 14px 12px; overflow-wrap: anywhere; }
+.rel-body p.ans { margin: 0; color: var(--text-2); font-size: 14.5px; white-space: pre-line; }
+.rel-body p.caution { margin: 8px 0 0; font-size: 12.5px; color: var(--warn); }
+.which { padding: 24px var(--gutter); text-align: center; }
+.which h2 { font-family: var(--font-display); font-weight: 500; margin: 0 0 6px; font-size: 22px; }
+.which p { margin: 0 0 14px; color: var(--text-2); font-size: 14px; }
+.which .chips { justify-content: center; flex-wrap: wrap; }
