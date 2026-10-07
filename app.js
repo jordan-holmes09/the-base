@@ -318,12 +318,25 @@
     document.getElementById("widen")?.addEventListener("click", () => { setCabin("all", true); renderApp(); });
     bindCards($out);
   }
+  // % complete from the KB database (snapshot at build time). Team view only — guests never see it.
+  function meter(slug) {
+    const k = state.data.completeness, c = k?.cabins?.[slug];
+    if (state.view === "guest" || !k) return "";
+    if (!c) return `<div class="kb-meter muted"><span>Knowledge base: not loaded yet</span></div>`;
+    const bits = [[c.verified, "verified"], [c.unconfirmed, "unconfirmed"], [c.needs_onsite, "need on-site"], [c.needs_person, "need a person"], [c.conflicts, "conflicts"], [c.stale, "stale"], [c.missing, "missing"]].filter(([n]) => n);
+    return `<div class="kb-meter">
+      <div class="kb-row"><b>${c.pct_complete}% complete</b><span>${c.pct_guest_ready}% ready for guest automation</span></div>
+      <div class="kb-bar" role="img" aria-label="${c.pct_complete}% complete"><i style="width:${c.pct_complete}%"></i></div>
+      <div class="kb-counts">${bits.map(([n, l]) => `${n} ${l}`).join(" · ")} · as of ${esc(k.as_of)}</div>
+    </div>`;
+  }
   function renderHome() {
     const quick = ["Check-in time", "WiFi", "Hot tub", "Directions", "Parking", "Pets", "Trash", "Dishwasher", "Coffee", "Firewood", "Late checkout", "TV", "Vehicle", "Grocery"];
     if (state.cabin === "all") {
       return `<div class="home">
         <h2>Pick a cabin <em>or just ask.</em></h2>
-        <div class="cabin-grid">${state.data.cabins.map((c) => `<button class="cabin-card" data-cabin="${c.slug}"><img src="${asset(c.photos[0]?.thumb || "")}" alt=""><div class="lbl"><b>${esc(c.name)}</b><span>Sleeps ${c.sleeps} · ${c.bedrooms} bd · ${c.bathrooms} ba</span></div></button>`).join("")}</div>
+        <div class="cabin-grid">${state.data.cabins.map((c) => `<button class="cabin-card" data-cabin="${c.slug}"><img src="${asset(c.photos[0]?.thumb || "")}" alt=""><div class="lbl"><b>${esc(c.name)}</b><span>Sleeps ${c.sleeps} · ${c.bedrooms} bd · ${c.bathrooms} ba</span></div>${state.view !== "guest" && state.data.completeness ? `<span class="kb-pill">${state.data.completeness.cabins?.[c.slug] ? state.data.completeness.cabins[c.slug].pct_complete + "%" : "not loaded"}</span>` : ""}</button>`).join("")}</div>
+        ${state.view !== "guest" && state.data.completeness?.company ? `<p class="kb-company">Company-wide policies: ${state.data.completeness.company.pct_complete}% complete (${state.data.completeness.company.approved} approved, ${state.data.completeness.company.drafts} drafts)</p>` : ""}
         <h2>Quick answers</h2>
         <div class="chips">${quick.map((q) => `<button class="chip q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
       </div>`;
@@ -332,6 +345,7 @@
     return `<div class="home">
       <h2>${esc(c.name)}</h2>
       <p class="cabin-meta">Sleeps ${c.sleeps} · ${c.bedrooms} bd · ${c.bathrooms} ba · Check-in ${esc(c.check_in)} · Check-out ${esc(c.check_out)}</p>
+      ${meter(c.slug)}
       <div class="strip">${c.photos.map((p, i) => `<button data-photo="${c.slug}:${i}" aria-label="${esc(p.label)}"><img src="${asset(p.thumb)}" alt="${esc(p.label)}" loading="lazy"></button>`).join("")}</div>
       <h2>Quick answers</h2>
       <div class="chips">${quick.map((q) => `<button class="chip q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>

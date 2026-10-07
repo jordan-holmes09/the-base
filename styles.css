@@ -175,3 +175,16 @@ details.rel > summary { padding: 11px 14px; cursor: pointer; font-size: 14px; co
 .which h2 { font-family: var(--font-display); font-weight: 500; margin: 0 0 6px; font-size: 22px; }
 .which p { margin: 0 0 14px; color: var(--text-2); font-size: 14px; }
 .which .chips { justify-content: center; flex-wrap: wrap; }
+
+/* ---------- % complete (team view) ---------- */
+.kb-meter { margin: 4px var(--gutter) 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.kb-meter.muted { color: var(--text-3); font-size: 13px; }
+.kb-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+.kb-row b { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--cream); }
+.kb-row span { color: var(--amber-glow); font-size: 12.5px; font-weight: 600; }
+.kb-bar { height: 6px; border-radius: 99px; background: var(--surface-3); margin: 8px 0 8px; overflow: hidden; }
+.kb-bar i { display: block; height: 100%; background: var(--amber); border-radius: 99px; }
+.kb-counts { color: var(--text-3); font-size: 12px; line-height: 1.45; }
+.cabin-card { position: relative; }
+.kb-pill { position: absolute; top: 8px; right: 8px; background: rgba(12,23,18,.78); color: var(--cream); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; }
+.kb-company { color: var(--text-3); font-size: 12.5px; margin: 10px var(--gutter) 0; }
